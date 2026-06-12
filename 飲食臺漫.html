@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>臺漫食光地圖｜在地飲食與文化記憶</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #fff8ef;
+      color: #3b2a1f;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #b85c38, #e6a157);
+      color: white;
+      padding: 48px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.3rem;
+      letter-spacing: 2px;
+    }
+
+    header p {
+      max-width: 760px;
+      margin: 16px auto 0;
+      font-size: 1.05rem;
+    }
+
+    nav {
+      background: #3b2a1f;
+      padding: 12px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 12px;
+      font-size: 0.95rem;
+    }
+
+    nav a:hover {
+      color: #ffd399;
+    }
+
+    section {
+      max-width: 1080px;
+      margin: auto;
+      padding: 42px 20px;
+    }
+
+    h2 {
+      border-left: 8px solid #c46b3c;
+      padding-left: 12px;
+      margin-bottom: 24px;
+      color: #6b3d26;
+    }
+
+    .intro {
+      background: #fff;
+      padding: 24px;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 22px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 22px;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      transition: transform 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+      border-top: 7px solid #d9824b;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #8a4424;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #ffe5c4;
+      color: #8a4424;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+
+    .detail-box {
+      margin-top: 28px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 26px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      display: none;
+    }
+
+    .detail-box.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    button {
+      border: none;
+      background: #b85c38;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 8px 6px 8px 0;
+    }
+
+    button:hover {
+      background: #8a4424;
+    }
+
+    .memory-box, .quiz-box {
+      background: #fff;
+      padding: 26px;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d8b99a;
+      border-radius: 10px;
+      margin: 8px 0 16px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .output {
+      margin-top: 18px;
+      padding: 18px;
+      background: #fff3df;
+      border-radius: 12px;
+      display: none;
+    }
+
+    .quiz-option {
+      display: block;
+      background: #fff3df;
+      border: 1px solid #e6c49e;
+      color: #3b2a1f;
+      margin: 10px 0;
+      text-align: left;
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .quiz-option:hover {
+      background: #ffe0b5;
+    }
+
+    footer {
+      text-align: center;
+      background: #3b2a1f;
+      color: white;
+      padding: 24px;
+      font-size: 0.9rem;
+    }
+
+    .source {
+      font-size: 0.85rem;
+      color: #6b5a4a;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>臺漫食光地圖</h1>
+    <p>
+      透過臺灣漫畫中的料理，認識在地飲食、家庭記憶與文化故事。
+      食物不只是味道，也可能是一段歷史、一個地方，或是一份沒有說出口的情感。
+    </p>
+  </header>
+
+  <nav>
+    <a href="#about">主題介紹</a>
+    <a href="#cards">飲食卡片</a>
+    <a href="#memory">我的家鄉味</a>
+    <a href="#quiz">小測驗</a>
+  </nav>
+
+  <section id="about">
+    <h2>主題介紹</h2>
+    <div class="intro">
+      <p>
+        本小程序根據「臺漫如何勾勒在地飲食與文化記憶」相關報導設計。
+        報導指出，近年臺灣漫畫題材越來越多元，飲食元素也逐漸成為創作者描寫人物、
+        土地與歷史的重要媒介。
+      </p>
+      <p>
+        因此，本小程序將幾部報導中提到的作品整理成互動卡片，讓使用者可以用更輕鬆的方式
+        理解「料理如何在漫畫中承載文化記憶」。
+      </p>
+    </div>
+  </section>
+
+  <section id="cards">
+    <h2>臺漫飲食卡片</h2>
+
+    <button onclick="showRandomCard()">隨機抽一張料理卡</button>
+
+    <div class="cards" id="cardContainer"></div>
+
+    <div class="detail-box" id="detailBox">
+      <h3 id="detailTitle"></h3>
+      <p><strong>代表料理：</strong><span id="detailFood"></span></p>
+      <p><strong>文化意義：</strong><span id="detailCulture"></span></p>
+      <p><strong>故事功能：</strong><span id="detailMeaning"></span></p>
+    </div>
+  </section>
+
+  <section id="memory">
+    <h2>我的家鄉味</h2>
+    <div class="memory-box">
+      <p>
+        想一想：如果你的生活也被畫成漫畫，哪一道料理最能代表你的家庭或成長記憶？
+      </p>
+
+      <label for="foodName">料理名稱</label>
+      <input type="text" id="foodName" placeholder="例如：滷肉飯、炒米粉、媽媽煮的湯" />
+
+      <label for="foodMemory">這道料理和你的記憶</label>
+      <textarea id="foodMemory" placeholder="寫下這道料理讓你想到的人、地方或故事"></textarea>
+
+      <button onclick="generateMemory()">生成我的文化記憶卡</button>
+
+      <div class="output" id="memoryOutput"></div>
+    </div>
+  </section>
+
+  <section id="quiz">
+    <h2>小測驗</h2>
+    <div class="quiz-box">
+      <p><strong>問題：</strong>根據這篇報導，臺灣漫畫中的飲食元素最常被用來做什麼？</p>
+
+      <button class="quiz-option" onclick="checkAnswer(false)">
+        A. 只用來介紹食譜和烹飪步驟
+      </button>
+
+      <button class="quiz-option" onclick="checkAnswer(true)">
+        B. 作為連結人物、土地、歷史與情感的媒介
+      </button>
+
+      <button class="quiz-option" onclick="checkAnswer(false)">
+        C. 只用來模仿日本美食漫畫
+      </button>
+
+      <div class="output" id="quizResult"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>臺漫食光地圖｜課堂小程序示範</p>
+    <p>資料概念改寫自大學報相關報導，僅作學習與展示用途。</p>
+  </footer>
+
+  <script>
+    const comicData = [
+      {
+        title: "《手路菜》",
+        tag: "家庭記憶",
+        food: "瓜仔肉、雞卷、炒米粉等家常菜",
+        culture: "料理不只是食物，也承載家庭關係與個人記憶。",
+        meaning: "透過一道熟悉的家常菜，帶出角色與母親之間的情感、衝突與牽掛。"
+      },
+      {
+        title: "《幸福調味料》",
+        tag: "日常生活",
+        food: "茶葉蛋、手工醬油等日常食材",
+        culture: "日常食材成為人物互動與地方生活的入口。",
+        meaning: "作品透過常見調味料與食物，描繪溫馨的人際關係與生活記憶。"
+      },
+      {
+        title: "《台灣特有種》",
+        tag: "地方特色",
+        food: "新竹貢丸、米粉等在地名產",
+        culture: "地方食物可以轉化成角色與世界觀，讓讀者重新認識家鄉。",
+        meaning: "以擬人化方式呈現在地名產，使食物成為地方文化的代表。"
+      },
+      {
+        title: "《友繪的小梅屋記事簿》",
+        tag: "歷史記憶",
+        food: "日治時期料理、蟳丸等",
+        culture: "料理能呈現不同時代的生活樣貌，也能反映文化交流。",
+        meaning: "作品透過食物描寫日治時期的臺日文化差異與社會背景。"
+      },
+      {
+        title: "《異人茶跡》",
+        tag: "茶文化",
+        food: "臺灣烏龍茶",
+        culture: "茶不只是飲品，也連結臺灣產業、歷史與人物故事。",
+        meaning: "透過茶葉歷史與人物敘事，呈現臺灣茶文化的發展脈絡。"
+      }
+    ];
+
+    const cardContainer = document.getElementById("cardContainer");
+
+    function createCards() {
+      comicData.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.onclick = () => showDetail(index);
+
+        card.innerHTML = `
+          <span class="tag">${item.tag}</span>
+          <h3>${item.title}</h3>
+          <p>${item.food}</p>
+        `;
+
+        cardContainer.appendChild(card);
+      });
+    }
+
+    function showDetail(index) {
+      const item = comicData[index];
+
+      document.getElementById("detailTitle").textContent = item.title;
+      document.getElementById("detailFood").textContent = item.food;
+      document.getElementById("detailCulture").textContent = item.culture;
+      document.getElementById("detailMeaning").textContent = item.meaning;
+
+      const detailBox = document.getElementById("detailBox");
+      detailBox.classList.add("active");
+      detailBox.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function showRandomCard() {
+      const randomIndex = Math.floor(Math.random() * comicData.length);
+      showDetail(randomIndex);
+    }
+
+    function generateMemory() {
+      const foodName = document.getElementById("foodName").value.trim();
+      const foodMemory = document.getElementById("foodMemory").value.trim();
+      const output = document.getElementById("memoryOutput");
+
+      if (!foodName || !foodMemory) {
+        output.style.display = "block";
+        output.innerHTML = "請先輸入料理名稱和你的記憶內容喔。";
+        return;
+      }
+
+      output.style.display = "block";
+      output.innerHTML = `
+        <h3>我的文化記憶卡</h3>
+        <p><strong>料理名稱：</strong>${foodName}</p>
+        <p><strong>我的記憶：</strong>${foodMemory}</p>
+        <p>
+          如果把這道料理放進漫畫裡，它可能不只是食物，
+          也會成為角色回憶、家庭關係或地方文化的重要線索。
+        </p>
+      `;
+    }
+
+    function checkAnswer(isCorrect) {
+      const result = document.getElementById("quizResult");
+      result.style.display = "block";
+
+      if (isCorrect) {
+        result.innerHTML = "答對了！報導強調，飲食在臺漫中常常是連結人物、土地、歷史與情感的媒介。";
+      } else {
+        result.innerHTML = "再想想看！這篇報導的重點不是只有料理本身，而是料理背後的文化與記憶。";
+      }
+    }
+
+    createCards();
+  </script>
+</body>
+</html>
